@@ -62,7 +62,7 @@ const addRecipe = async (req, res) => {
     }
 
     // Check if the recipe already exists
-    const existingRecipe = await RecipeModel.findOne({ title });
+    const existingRecipe = await Recipe.findOne({ title });
     if (existingRecipe) {
       return res
         .status(400)
@@ -70,7 +70,7 @@ const addRecipe = async (req, res) => {
     }
 
     // Create a new recipe in the database
-    const recipe = await RecipeModel.create({
+    const recipe = await Recipe.create({
       title,
       description,
       ingredients,

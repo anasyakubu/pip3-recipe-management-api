@@ -27,48 +27,50 @@ const addRecipe = async (req, res) => {
       tags,
       userID,
     } = req.body;
-    // check if details was entered
+
+    // Check if all required fields are provided
     if (!title) {
       return res.status(400).json({ status: 400, error: "Title is required" });
     }
     if (!description) {
       return res
         .status(400)
-        .json({ status: 400, error: "Descriptionis required" });
+        .json({ status: 400, error: "Description is required" });
     }
     if (!ingredients) {
       return res
         .status(400)
-        .json({ status: 400, error: "Ingredients is required" });
+        .json({ status: 400, error: "Ingredients are required" });
     }
     if (!instructions) {
       return res
         .status(400)
-        .json({ status: 400, error: "Instructions is required" });
+        .json({ status: 400, error: "Instructions are required" });
     }
     if (!categories) {
       return res
         .status(400)
-        .json({ status: 400, error: "Categories is required" });
+        .json({ status: 400, error: "Categories are required" });
     }
-
     if (!tags) {
-      return res.status(400).json({ status: 400, error: "Tags is required" });
+      return res.status(400).json({ status: 400, error: "Tags are required" });
     }
-
     if (!userID) {
-      return res.status(400).json({ status: 400, error: "userID is required" });
-    }
-    // check organisation exist
-    const exist = await Recipe.findOne({ title });
-    if (exist) {
       return res
         .status(400)
-        .json({ status: 400, error: "Recipe Already Exist" });
+        .json({ status: 400, error: "User ID is required" });
     }
 
-    // create Recipe in db
-    const recipe = await Recipe.create({
+    // Check if the recipe already exists
+    const existingRecipe = await RecipeModel.findOne({ title });
+    if (existingRecipe) {
+      return res
+        .status(400)
+        .json({ status: 400, error: "Recipe already exists" });
+    }
+
+    // Create a new recipe in the database
+    const recipe = await RecipeModel.create({
       title,
       description,
       ingredients,
@@ -77,10 +79,14 @@ const addRecipe = async (req, res) => {
       tags,
       userID,
     });
-    // return res.status(201);
-    return res.status(201).send(recipe);
+
+    // Return the newly created recipe
+    return res.status(201).json(recipe);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res
+      .status(500)
+      .json({ status: 500, error: "Internal Server Error" });
   }
 };
 
